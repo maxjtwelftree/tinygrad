@@ -176,7 +176,7 @@ def smax(*lst): return _suop(lst[0] if isinstance(lst[0], (tuple, list)) else ls
 def smin(*lst): return _suop(lst[0] if isinstance(lst[0], (tuple, list)) else lst, UOp.min, min)
 
 def ssimplify(uop): return uop.ssimplify() if isinstance(uop, UOp) else uop
-def sym_infer(uop: Union[UOp, int], var_vals: Dict[UOp, int]) -> int: return uop.sym_infer(var_vals) if isinstance(uop, UOp) else uop
+def sym_infer(uop: Union[UOp, int, float], var_vals: Dict[UOp, Union[int, float]]) -> Union[int, float]: return int(uop) if isinstance(uop, (int, float)) else uop.sym_infer(var_vals)
 
 # used for UOp and UPat
 def pretty_print(x:Any, rep:Callable, srcfn=lambda x: x.src, cache=None, d=0)->str:
@@ -414,7 +414,7 @@ class UOp(MathTrait):
     # TODO: sanitize varnames, or don't use naked eval while staying fast
     return eval("lambda "+','.join(varnames)+": "+sself.render()), varnames  # pylint: disable=eval-used
 
-  def sym_infer(self, var_vals:Dict[UOp, int]):
+  def sym_infer(self, var_vals: Dict[UOp, Union[int, float]]) -> Union[int, float]:
     fxn, varnames = self._sym_fxn
     return fxn(**{k.arg[0]:v for k,v in var_vals.items() if k.arg[0] in varnames})
 

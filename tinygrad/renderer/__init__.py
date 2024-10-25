@@ -68,6 +68,8 @@ class Program:
   def launch_dims(self, var_vals:Dict[Variable, int]):
     global_size = [sym_infer(sz, var_vals) for sz in self.global_size] if self.global_size is not None else None
     local_size = [sym_infer(sz, var_vals) for sz in self.local_size] if self.local_size is not None else None
+    if global_size: global_size = [int(sz) if isinstance(sz, float) else sz for sz in global_size]
+    if local_size: local_size = [int(sz) if isinstance(sz, float) else sz for sz in local_size]
     return global_size, local_size
 
 class Renderer:
